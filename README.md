@@ -1,0 +1,2 @@
+# weekend
+Weekend activities organizer
