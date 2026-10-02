@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>镜面塔罗 · 极简版</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -250,22 +250,20 @@
     border-color: #ddd;
   }
 
-  /* 落款固定在底部 */
+  /* 落款：无分割线，位置上移 */
   .tip {
     flex-shrink: 0;
     width: 100%;
-    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+    padding: 10px 0 calc(24px + env(safe-area-inset-bottom));
     font-size: 11px;
     color: #666;
     text-align: center;
     letter-spacing: 3px;
     background: #14141c;
-    border-top: 1px solid #2a2a38;
     z-index: 10;
   }
   body.light .tip {
     background: #f5f1e8;
-    border-top: 1px solid #e4dbc9;
   }
   .tip .by {
     color: #d4a050;
