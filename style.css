@@ -169,12 +169,27 @@ body.light .card-show {
 /* ============================================================
    L2 翻牌区 · 三张牌位（过去 / 现在 / 未来）
    ============================================================ */
+
+/* 桌面：给三张牌一点"落在桌上"的感觉 */
 .stage {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
   width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(212, 160, 80, 0.05) 0%, transparent 70%),
+    rgba(255, 255, 255, 0.012);
+  border: 1px solid rgba(42, 42, 56, 0.6);
 }
+body.light .stage {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(176, 128, 58, 0.06) 0%, transparent 70%),
+    rgba(0, 0, 0, 0.02);
+  border-color: rgba(228, 219, 201, 0.9);
+}
+
 .stage-item {
   flex: 1 1 0;
   min-width: 0;
@@ -190,20 +205,19 @@ body.light .card-show {
   font-family: 'SF Mono', 'Courier New', monospace;
 }
 
-/* 牌位本体 */
+/* 牌位本体：用 padding-bottom 撑出 2:3 竖长方形（iOS 兼容） */
 .stage-card {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  padding-bottom: 150%;   /* 宽度 × 150% = 高度 */
   perspective: 900px;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 .stage-card .inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   transform-style: preserve-3d;
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -224,22 +238,44 @@ body.light .card-show {
   overflow: hidden;
 }
 
-/* 牌背 */
+/* ---- 牌背：多层金框 + 中央小菱形 ---- */
 .stage-card .back {
-  background: linear-gradient(135deg, #1a1a24, #0e0e14);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(212, 160, 80, 0.12) 0%, transparent 55%),
+    repeating-conic-gradient(from 45deg at 50% 50%,
+      rgba(212, 160, 80, 0.05) 0deg 22.5deg,
+      transparent 22.5deg 45deg),
+    linear-gradient(135deg, #1a1a24 0%, #0e0e14 50%, #1a1a24 100%);
   border: 1.5px solid #d4a050;
   position: relative;
-}
-.stage-card .back::after {
-  content: '';
-  width: 34%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #ffd08a, #d4a050 60%, #5a3a10);
-  box-shadow: 0 0 20px rgba(212, 160, 80, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 可点击的牌位轻微脉动，提示用户点它 */
+/* 内层金框 */
+.stage-card .back::before {
+  content: '';
+  position: absolute;
+  inset: 9%;
+  border: 1px solid rgba(212, 160, 80, 0.4);
+  border-radius: 3px;
+}
+
+/* 中央小菱形 */
+.stage-card .back::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: radial-gradient(circle at 40% 35%, #ffd08a, #d4a050 60%, #5a3a10);
+  box-shadow: 0 0 14px rgba(212, 160, 80, 0.55);
+}
+
+/* 可点击的牌位轻微脉动 */
 .stage-card.clickable:not(.flipped) .back {
   animation: pulse 2s infinite;
 }
@@ -254,7 +290,7 @@ body.light .card-show {
 }
 .stage-card.locked { cursor: default; }
 
-/* 牌正面 */
+/* ---- 牌正面 ---- */
 .stage-card .front {
   transform: rotateY(180deg);
   background: #1c1c28;
@@ -283,8 +319,18 @@ body.light .card-show {
   max-width: 100%;
 }
 
+/* 亮色模式适配 */
 body.light .stage-card .back {
-  background: linear-gradient(135deg, #f8f4ec, #ebe4d4);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(176, 128, 58, 0.12) 0%, transparent 55%),
+    repeating-conic-gradient(from 45deg at 50% 50%,
+      rgba(176, 128, 58, 0.06) 0deg 22.5deg,
+      transparent 22.5deg 45deg),
+    linear-gradient(135deg, #f8f4ec 0%, #ebe4d4 50%, #f8f4ec 100%);
+  border-color: #b0803a;
+}
+body.light .stage-card .back::before {
+  border-color: rgba(176, 128, 58, 0.45);
 }
 body.light .stage-card .front {
   background: #fff;
