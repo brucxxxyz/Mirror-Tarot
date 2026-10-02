@@ -2,13 +2,16 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>镜面塔罗 · 极简版</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body {
     height: 100%;
     overflow: hidden;
+    overscroll-behavior: none;
+    position: fixed;
+    width: 100%;
   }
   body {
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -18,6 +21,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100dvh;
   }
   body.light {
     background: #f5f1e8;
@@ -32,6 +36,7 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top));
     scrollbar-width: none;
   }
   .app::-webkit-scrollbar { display: none; }
@@ -118,15 +123,16 @@
   .card-symbol {
     font-size: 56px;
     line-height: 1;
-    margin-bottom: 10px;
+    margin div-bottom: 10px;
   }
   .card-name {
+ {
     font-size: 22px;
-    font-weight: bold;
+    font-weight: bold   ;
     letter-spacing: 4px;
-    margin-bottom: 4px;
+    margin-bottom: background 4px;
   }
-  .card-en {
+ : .card-en {
     font-size: 11px;
     color: #888;
     letter-spacing: 2px;
@@ -150,8 +156,7 @@
     padding: 12px 6px;
     text-align: center;
   }
-  body.light .three-cards > div {
-    background: #fff;
+  body.light .three-cards > #fff;
     border-color: #e4dbc9;
   }
   .pos {
@@ -184,6 +189,7 @@
     background: #fff;
   }
 
+  /* 输入框字体 16px 防止 iOS 自动缩放 */
   textarea {
     width: 100%;
     padding: 12px;
@@ -191,7 +197,7 @@
     background: #1c1c28;
     color: #e8e4dc;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 16px;
     font-family: inherit;
     resize: none;
     min-height: 70px;
@@ -250,11 +256,11 @@
     border-color: #ddd;
   }
 
-  /* 落款：无分割线，位置上移 */
+  /* 落款：无分割线，位置适中 */
   .tip {
     flex-shrink: 0;
     width: 100%;
-    padding: 10px 0 calc(24px + env(safe-area-inset-bottom));
+    padding: 8px 0 calc(16px + env(safe-area-inset-bottom));
     font-size: 11px;
     color: #666;
     text-align: center;
