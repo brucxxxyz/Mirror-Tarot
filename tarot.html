@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>镜面塔罗 · 极简版</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #14141c;
+    color: #e8e4dc;
+    padding: 20px;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+  body.light {
+    background: #f5f1e8;
+    color: #2a2520;
+  }
+  .app { max-width: 520px; margin: 0 auto; }
+
+  h1 {
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: #d4a050;
+    margin-bottom: 4px;
+  }
+  .sub {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 20px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .tabs button {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #2a2a38;
+    background: #1c1c28;
+    color: #999;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tabs button.on {
+    background: #d4a050;
+    color: #14141c;
+    border-color: #d4a050;
+    font-weight: bold;
+  }
+  body.light .tabs button {
+    background: #fff;
+    border-color: #ddd;
+    color: #666;
+  }
+  body.light .tabs button.on {
+    background: #b0803a;
+    color: #fff;
+    border-color: #b0803a;
+  }
+
+  .view { display: none; }
+  .view.on { display: block; }
+
+  button.act {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d4a050;
+    background: transparent;
+    color: #d4a050;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 16px;
+  }
+  button.act:active { background: #d4a050; color: #14141c; }
+  button.act:disabled { opacity: 0.4; }
+  body.light button.act {
+    border-color: #b0803a;
+    color: #b0803a;
+  }
+
+  .card-show {
+    background: #1c1c28;
+    border: 1px solid #2a2a38;
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  body.light .card-show {
+    background: #fff;
+    border-color: #e4dbc9;
+  }
+  .card-symbol {
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .card-name {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  .card-en {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .card-key {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .three-cards {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .three-cards > div {
+    flex: 1;
+    background: #1c1c28;
+    border: 1px solid #2a2a38;
+    border-radius: 10px;
+    padding: 12px 6px;
+    text-align: center;
+  }
+  body.light .three-cards > div {
+    background: #fff;
+    border-color: #e4dbc9;
+  }
+  .pos {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .three-cards .sym {
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .three-cards .nm {
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .out {
+    background: #1c1c28;
+    border-left: 3px solid #d4a050;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    margin-bottom: 16px;
+  }
+  body.light .out {
+    background: #fff;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #2a2a38;
+    background: #1c1c28;
+    color: #e8e4dc;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: none;
+    min-height: 70px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  textarea:focus { outline: none; border-color: #d4a050; }
+  body.light textarea {
+    background: #fff;
+    color: #2a2520;
+    border-color: #ddd;
+  }
+
+  .hist-item {
+    background: #1c1c28;
+    border: 1px solid #2a2a38;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  body.light .hist-item { background: #fff; border-color: #e4dbc9; }
+  .hist-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+  }
+  .hist-q { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+  .hist-cards { font-size: 12px; color: #999; }
+
+  .empty {
+    text-align: center;
+    color: #666;
+    padding: 40px 20px;
+    font-size: 13px;
+  }
+
+  .theme {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #2a2a38;
+    background: #1c1c28;
+    color: #d4a050;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  body.light .theme {
+    background: #fff;
+    border-color: #ddd;
+  }
+
+  .tip {
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+    margin-top: 24px;
+    letter-spacing: 3px;
+  }
+  .tip .by {
+    color: #d4a050;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  body.light .tip .by {
+    color: #b0803a;
+  }
+</style>
+</head>
+<body>
+<button class="theme" id="themeBtn">☀</button>
+
+<div class="app">
+  <h1>MIRROR TAROT</h1>
+  <div class="sub">镜面塔罗 · 照见自己</div>
+
+  <div class="tabs">
+    <button class="on" data-tab="daily">日卡</button>
+    <button data-tab="ask">一问</button>
+    <button data-tab="hist">记录</button>
+  </div>
+
+  <!-- 日卡 -->
+  <div class="view on" id="v-daily">
+    <button class="act" id="dailyBtn">抽一张</button>
+    <div id="dailyOut"></div>
+  </div>
+
+  <!-- 一问 -->
+  <div class="view" id="v-ask">
+    <textarea id="qInput" placeholder="写下你的问题..."></textarea>
+    <button class="act" id="askBtn">抽 3 张牌</button>
+    <div id="askOut"></div>
+  </div>
+
+  <!-- 记录 -->
+  <div class="view" id="v-hist">
+    <div id="histOut"></div>
+  </div>
+
+  <div class="tip">— Designed by <span class="by">BY</span> —</div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var CARDS = [
+    { n:'愚者', e:'The Fool', s:'○', k:'开始·未知' },
+    { n:'魔术师', e:'The Magician', s:'∞', k:'创造·行动' },
+    { n:'女祭司', e:'The High Priestess', s:'☽', k:'直觉·内在' },
+    { n:'皇后', e:'The Empress', s:'♀', k:'滋养·丰盛' },
+    { n:'皇帝', e:'The Emperor', s:'♛', k:'秩序·边界' },
+    { n:'教皇', e:'The Hierophant', s:'✝', k:'传统·信念' },
+    { n:'恋人', e:'The Lovers', s:'♡', k:'选择·结合' },
+    { n:'战车', e:'The Chariot', s:'⚔', k:'意志·前进' },
+    { n:'力量', e:'Strength', s:'⧖', k:'勇气·耐心' },
+    { n:'隐者', e:'The Hermit', s:'✧', k:'独处·探索' },
+    { n:'命运之轮', e:'Wheel', s:'☸', k:'变化·周期' },
+    { n:'正义', e:'Justice', s:'⚖', k:'平衡·因果' },
+    { n:'倒吊人', e:'Hanged Man', s:'▽', k:'暂停·视角' },
+    { n:'死神', e:'Death', s:'☠', k:'结束·转化' },
+    { n:'节制', e:'Temperance', s:'△', k:'平衡·融合' },
+    { n:'恶魔', e:'The Devil', s:'⛧', k:'束缚·欲望' },
+    { n:'塔', e:'The Tower', s:'⚡', k:'崩塌·觉醒' },
+    { n:'星星', e:'The Star', s:'★', k:'希望·指引' },
+    { n:'月亮', e:'The Moon', s:'☾', k:'幻象·潜意识' },
+    { n:'太阳', e:'The Sun', s:'☀', k:'光明·清晰' },
+    { n:'审判', e:'Judgement', s:'✦', k:'觉醒·召唤' },
+    { n:'世界', e:'The World', s:'◉', k:'完成·圆满' }
+  ];
+
+  var OBS = [
+    '今天允许自己还没想清楚。',
+    '你已有的工具，比你以为的多。',
+    '有些答案不需要说出来。',
+    '今天可以对自己好一点。',
+    '边界不是墙，是你允许什么进入。',
+    '你遵循的规则，是你选的吗？',
+    '今天的选择，都在替你说一句话。',
+    '不用想太远，先推进一寸。',
+    '慢一点，比用力更有力量。',
+    '今天可以少说一点。',
+    '有些事情正在转到另一面。',
+    '你心里其实已经有一杆秤。',
+    '停一下，不是退，是换个角度。',
+    '有什么正在结束，你感觉到了。',
+    '两个极端之间，有一个能站稳的点。',
+    '注意你想抓住什么。',
+    '让该塌的塌，之后才看得清。',
+    '不需要看清全部，只需看清下一步。',
+    '今天不必看清全部。',
+    '今天可以简单一点，明亮一点。',
+    '有一件事，你已经准备好面对了。',
+    '你正在靠近一个循环的终点。'
+  ];
+
+  var history = [];
+  try { history = JSON.parse(localStorage.getItem('mt_h') || '[]'); } catch(e){}
+
+  var currentDaily = null;
+
+  function $(id){ return document.getElementById(id); }
+  function save(){ localStorage.setItem('mt_h', JSON.stringify(history)); }
+  function rand(){ return CARDS[Math.floor(Math.random()*CARDS.length)]; }
+  function now(){
+    var d = new Date();
+    var p = function(x){ return x<10?'0'+x:''+x; };
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+  }
+
+  // 标签切换
+  var tabs = document.querySelectorAll('.tabs button');
+  for (var i=0; i<tabs.length; i++){
+    tabs[i].onclick = function(){
+      var t = this.getAttribute('data-tab');
+      for (var j=0; j<tabs.length; j++) tabs[j].classList.remove('on');
+      this.classList.add('on');
+      var views = document.querySelectorAll('.view');
+      for (var k=0; k<views.length; k++) views[k].classList.remove('on');
+      $('v-' + t).classList.add('on');
+      if (t === 'hist') showHist();
+    };
+  }
+
+  // 日卡
+  $('dailyBtn').onclick = function(){
+    var card = rand();
+    var obs = OBS[CARDS.indexOf(card)] || '注意你今天注意到了什么。';
+    currentDaily = { card: card, obs: obs };
+    this.textContent = '再抽一张';
+    renderDaily(card, obs);
+  };
+
+  function renderDaily(card, obs){
+    var html = '<div class="card-show">' +
+      '<div class="card-symbol">' + card.s + '</div>' +
+      '<div class="card-name">' + card.n + '</div>' +
+      '<div class="card-en">' + card.e + '</div>' +
+      '<div class="card-key">' + card.k + '</div>' +
+      '</div>' +
+      '<div class="out">' + obs + '</div>' +
+      '<textarea id="dailyRef" placeholder="今天，我注意到..."></textarea>' +
+      '<button class="act" id="dailySaveBtn">记录这一张</button>';
+    $('dailyOut').innerHTML = html;
+
+    $('dailySaveBtn').onclick = function(){
+      var v = $('dailyRef').value.trim();
+      if (!v) { alert('写点什么吧'); return; }
+      if (!currentDaily) return;
+
+      history.unshift({
+        id: 'h' + Date.now(),
+        mode: 'daily',
+        date: now(),
+        card: currentDaily.card,
+        obs: currentDaily.obs,
+        reflect: v
+      });
+      save();
+      alert('已记录');
+    };
+  }
+
+  // 一问
+  $('askBtn').onclick = function(){
+    var q = $('qInput').value.trim();
+    if (!q) { alert('先写下你的问题'); return; }
+
+    var picked = [];
+    var used = {};
+    while (picked.length < 3){
+      var c = rand();
+      var key = c.n;
+      if (used[key]) continue;
+      used[key] = 1;
+      picked.push(c);
+    }
+
+    var pos = ['现状', '障碍', '建议'];
+    var cardsHtml = '<div class="three-cards">';
+    for (var i=0; i<3; i++){
+      cardsHtml += '<div>' +
+        '<div class="pos">' + pos[i] + '</div>' +
+        '<div class="sym">' + picked[i].s + '</div>' +
+        '<div class="nm">' + picked[i].n + '</div>' +
+        '</div>';
+    }
+    cardsHtml += '</div>';
+
+    var reading =
+      '「' + picked[0].n + '」在现状位——' + picked[0].k.split('·')[0] + '。\n\n' +
+      '「' + picked[1].n + '」在障碍位，可能是你不愿看的部分：' + (picked[1].k.split('·')[1] || picked[1].k.split('·')[0]) + '。\n\n' +
+      '「' + picked[2].n + '」在建议位，不是答案，是一个角度：' + picked[2].k.split('·')[0] + '。\n\n' +
+      '你真正想问的，是「' + q + '」，还是关于它的什么？';
+
+    var html = cardsHtml +
+      '<div class="out">' + reading + '</div>' +
+      '<textarea id="askRef" placeholder="读了这几张牌，你想到了什么？"></textarea>' +
+      '<button class="act" id="askSaveBtn">记录这次抽卡</button>';
+    $('askOut').innerHTML = html;
+
+    $('askSaveBtn').onclick = function(){
+      var v = $('askRef').value.trim();
+      if (!v) { alert('写点什么吧'); return; }
+      history.unshift({
+        id: 'h' + Date.now(),
+        mode: 'ask',
+        date: now(),
+        question: q,
+        cards: picked,
+        reading: reading,
+        reflect: v
+      });
+      save();
+      alert('已记录到本机');
+      $('qInput').value = '';
+      $('askOut').innerHTML = '';
+    };
+  };
+
+  // 历史
+  function showHist(){
+    if (!history.length){
+      $('histOut').innerHTML = '<div class="empty">还没有记录<br><br>去抽一张吧</div>';
+      return;
+    }
+    var html = '';
+    for (var i=0; i<history.length; i++){
+      var h = history[i];
+      var cardTxt = '';
+      if (h.mode === 'daily'){
+        cardTxt = '日卡 · ' + h.card.n;
+      } else {
+        var arr = [];
+        for (var j=0; j<h.cards.length; j++){
+          arr.push(['现状','障碍','建议'][j] + '·' + h.cards[j].n);
+        }
+        cardTxt = arr.join(' / ');
+      }
+      var detail = h.mode === 'daily' ? (h.obs || '') : (h.reading || '');
+      html += '<div class="hist-item" onclick="var d=this.querySelector(\'.detail\'); if(d) d.style.display = d.style.display===\'block\'?\'none\':\'block\';">' +
+        '<div class="hist-head"><span>' + h.date + '</span><span>' + (h.mode === 'daily' ? '日卡' : '一问') + '</span></div>' +
+        (h.question ? '<div class="hist-q">' + h.question + '</div>' : '') +
+        '<div class="hist-cards">' + cardTxt + '</div>' +
+        '<div class="detail" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid #2a2a38; font-size:13px; white-space:pre-wrap;">' +
+          detail +
+          (h.reflect ? '\n\n【你的回答】\n' + h.reflect : '') +
+        '</div>' +
+      '</div>';
+    }
+    $('histOut').innerHTML = html;
+  }
+
+  // 主题
+  function setTheme(t){
+    if (t === 'light') document.body.classList.add('light');
+    else document.body.classList.remove('light');
+    $('themeBtn').textContent = t === 'light' ? '☾' : '☀';
+    try { localStorage.setItem('mt_t', t); } catch(e){}
+  }
+  $('themeBtn').onclick = function(){
+    var cur = document.body.classList.contains('light') ? 'light' : 'dark';
+    setTheme(cur === 'light' ? 'dark' : 'light');
+  };
+  try { setTheme(localStorage.getItem('mt_t') || 'dark'); } catch(e){ setTheme('dark'); }
+
+})();
+</script>
+</body>
+</html>
