@@ -2,23 +2,39 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=">
 <title>镜面塔罗 · 极简版</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
   body {
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     background: #14141c;
     color: #e8e4dc;
-    padding: 20px 20px calc(60px + env(safe-area-inset-bottom));
-    min-height: 100vh;
     line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   body.light {
     background: #f5f1e8;
     color: #2a2520;
   }
-  .app { max-width: 520px; margin: 0 auto; }
+
+  /* 中间内容区：固定高度，内部滚动 */
+  .app {
+    flex: 1;
+    width: 100%;
+    max-width: 520px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
+    scrollbar-width: none;
+  }
+  .app::-webkit-scrollbar { display: none; }
 
   h1 {
     font-size: 16px;
@@ -234,12 +250,10 @@
     border-color: #ddd;
   }
 
-  /* 落款固定在底部，避开 iPhone 安全区 */
+  /* 落款固定在底部 */
   .tip {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    flex-shrink: 0;
+    width: 100%;
     padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
     font-size: 11px;
     color: #666;
@@ -295,7 +309,7 @@
   </div>
 </div>
 
-<div class="tip">—— Designed by <span class="by">BY</span> ——</div>
+<div class="tip">— Designed by <span class="by">BY</span> —</div>
 
 <script>
 (function(){
