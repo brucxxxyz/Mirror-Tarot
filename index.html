@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>镜面塔罗 · Mirror Tarot</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -20,35 +20,22 @@
     <button data-tab="hist">记录</button>
   </div>
 
-  <!-- ============================================================
-       日卡
-       ============================================================ -->
   <section class="view on" id="v-daily">
     <button class="act" id="dailyBtn">抽一张</button>
     <div id="dailyOut"></div>
   </section>
 
-  <!-- ============================================================
-       一问 · 过去 / 现在 / 未来
-       - #askStage   三张牌位（由 app.js 动态渲染）
-       - #askReading L2 分析结果（三张全翻开后填充）
-       ============================================================ -->
   <section class="view" id="v-ask">
     <div class="hint-line" id="askHint">Step 1 · 写下你的问题</div>
     <textarea id="qInput" placeholder="最近在想什么？写下你的问题..."></textarea>
 
     <button class="act" id="askBtn">洗牌 · 抽 3 张牌</button>
 
-    <!-- 三张牌位：过去 / 现在 / 未来 -->
     <div class="stage" id="askStage"></div>
 
-    <!-- L2 分析结果 -->
     <div class="reading" id="askReading"></div>
   </section>
 
-  <!-- ============================================================
-       记录
-       ============================================================ -->
   <section class="view" id="v-hist">
     <div id="histOut"></div>
   </section>
@@ -56,7 +43,7 @@
 
 <footer class="tip">— Designed by <span class="by">BY</span> —</footer>
 
-<script src="engine.js"></script>
-<script src="app.js"></script>
+<script src="engine.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
