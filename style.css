@@ -1,13 +1,9 @@
 /* ============================================================
-   镜面塔罗 · Mirror Tarot
-   style.css
+   镜面塔罗 · Mirror Tarot — style.css
    ============================================================ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ------------------------------------------------------------
-   锁定视口：整页不拖动、不回弹、输入不缩放
-   ------------------------------------------------------------ */
 html, body {
   height: 100%;
   overflow: hidden;
@@ -25,14 +21,8 @@ body {
   align-items: center;
   height: 100dvh;
 }
-body.light {
-  background: #f5f1e8;
-  color: #2a2520;
-}
+body.light { background: #f5f1e8; color: #2a2520; }
 
-/* ============================================================
-   中间内容区
-   ============================================================ */
 .app {
   flex: 1;
   width: 100%;
@@ -56,7 +46,6 @@ h1 {
   color: #777;
   margin-bottom: 20px;
 }
-
 .hint-line {
   font-size: clamp(10px, 3vw, 12px);
   color: #888;
@@ -65,14 +54,7 @@ h1 {
   margin-bottom: 10px;
 }
 
-/* ============================================================
-   Tabs
-   ============================================================ */
-.tabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 20px;
-}
+.tabs { display: flex; gap: 6px; margin-bottom: 20px; }
 .tabs button {
   flex: 1;
   padding: 10px;
@@ -90,26 +72,12 @@ h1 {
   border-color: #d4a050;
   font-weight: bold;
 }
-body.light .tabs button {
-  background: #fff;
-  border-color: #ddd;
-  color: #666;
-}
-body.light .tabs button.on {
-  background: #b0803a;
-  color: #fff;
-  border-color: #b0803a;
-}
+body.light .tabs button { background: #fff; border-color: #ddd; color: #666; }
+body.light .tabs button.on { background: #b0803a; color: #fff; border-color: #b0803a; }
 
-/* ============================================================
-   视图切换
-   ============================================================ */
 .view { display: none; }
 .view.on { display: block; }
 
-/* ============================================================
-   主按钮
-   ============================================================ */
 button.act {
   width: 100%;
   padding: 14px;
@@ -124,14 +92,9 @@ button.act {
 }
 button.act:active { background: #d4a050; color: #14141c; }
 button.act:disabled { opacity: 0.4; cursor: not-allowed; }
-body.light button.act {
-  border-color: #b0803a;
-  color: #b0803a;
-}
+body.light button.act { border-color: #b0803a; color: #b0803a; }
 
-/* ============================================================
-   日卡
-   ============================================================ */
+/* ---- 日卡 ---- */
 .card-show {
   background: #1c1c28;
   border: 1px solid #2a2a38;
@@ -140,37 +103,16 @@ body.light button.act {
   text-align: center;
   margin-bottom: 16px;
 }
-body.light .card-show {
-  background: #fff;
-  border-color: #e4dbc9;
-}
-.card-symbol {
-  font-size: clamp(48px, 14vw, 64px);
-  line-height: 1;
-  margin-bottom: 10px;
-}
-.card-name {
-  font-size: clamp(20px, 6vw, 26px);
-  font-weight: bold;
-  letter-spacing: 4px;
-  margin-bottom: 4px;
-}
-.card-en {
-  font-size: clamp(10px, 3vw, 12px);
-  color: #888;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-}
-.card-key {
-  font-size: clamp(11px, 3.5vw, 13px);
-  color: #999;
-}
+body.light .card-show { background: #fff; border-color: #e4dbc9; }
+.card-symbol { font-size: clamp(48px, 14vw, 64px); line-height: 1; margin-bottom: 10px; }
+.card-name { font-size: clamp(20px, 6vw, 26px); font-weight: bold; letter-spacing: 4px; margin-bottom: 4px; }
+.card-en { font-size: clamp(10px, 3vw, 12px); color: #888; letter-spacing: 2px; margin-bottom: 8px; }
+.card-key { font-size: clamp(11px, 3.5vw, 13px); color: #999; }
 
 /* ============================================================
-   L2 翻牌区 · 三张牌位（过去 / 现在 / 未来）
+   L2 翻牌区 · 三张牌位
+   ---- 卡片高度由 JS 动态设定 ----
    ============================================================ */
-
-/* 桌面：grid 布局，三个等宽列，宽度确定后 aspect-ratio 才能算高度 */
 .stage {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -191,25 +133,27 @@ body.light .stage {
   border-color: rgba(228, 219, 201, 0.9);
 }
 
+/* 用 block 而不是 flex，避免高度塌陷 */
 .stage-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  display: block;
+  text-align: center;
   min-width: 0;
 }
 .stage-item .pos {
+  display: block;
   font-size: clamp(9px, 2.6vw, 11px);
   color: #888;
   letter-spacing: 1.5px;
   font-family: 'SF Mono', 'Courier New', monospace;
+  margin-bottom: 6px;
 }
 
-/* 牌位本体：aspect-ratio 在 grid 里能正确算出高度 */
+/* 卡片本体：高度由 JS 设成「宽度 × 1.5」 */
 .stage-card {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  height: 160px;   /* 兜底值，JS 会覆盖 */
+  min-height: 120px;
   perspective: 900px;
   cursor: pointer;
   user-select: none;
@@ -217,17 +161,17 @@ body.light .stage {
 }
 .stage-card .inner {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   transform-style: preserve-3d;
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.stage-card.flipped .inner {
-  transform: rotateY(180deg);
-}
+.stage-card.flipped .inner { transform: rotateY(180deg); }
 
 .stage-card .face {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   border-radius: 10px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -238,7 +182,7 @@ body.light .stage {
   overflow: hidden;
 }
 
-/* ---- 牌背：多层金框 + 中央小菱形 ---- */
+/* 牌背 */
 .stage-card .back {
   background:
     radial-gradient(circle at 50% 50%, rgba(212, 160, 80, 0.12) 0%, transparent 55%),
@@ -248,12 +192,7 @@ body.light .stage {
     linear-gradient(135deg, #1a1a24 0%, #0e0e14 50%, #1a1a24 100%);
   border: 1.5px solid #d4a050;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-
-/* 内层金框 */
 .stage-card .back::before {
   content: '';
   position: absolute;
@@ -261,21 +200,18 @@ body.light .stage {
   border: 1px solid rgba(212, 160, 80, 0.4);
   border-radius: 3px;
 }
-
-/* 中央小菱形 */
 .stage-card .back::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20%;
-  aspect-ratio: 1;
+  top: 50%; left: 50%;
+  width: 22%; height: 15%;
+  min-width: 14px; min-height: 14px;
+  max-width: 26px; max-height: 26px;
   transform: translate(-50%, -50%) rotate(45deg);
   background: radial-gradient(circle at 40% 35%, #ffd08a, #d4a050 60%, #5a3a10);
   box-shadow: 0 0 14px rgba(212, 160, 80, 0.55);
 }
 
-/* 可点击的牌位轻微脉动 */
 .stage-card.clickable:not(.flipped) .back {
   animation: pulse 2s infinite;
 }
@@ -283,14 +219,10 @@ body.light .stage {
   0%, 100% { box-shadow: 0 0 0 rgba(212, 160, 80, 0); }
   50%      { box-shadow: 0 0 18px rgba(212, 160, 80, 0.45); }
 }
-
-/* 未轮到 / 已锁定，变淡 */
-.stage-card.locked:not(.flipped) {
-  opacity: 0.4;
-}
+.stage-card.locked:not(.flipped) { opacity: 0.4; }
 .stage-card.locked { cursor: default; }
 
-/* ---- 牌正面 ---- */
+/* 牌正面 */
 .stage-card .front {
   transform: rotateY(180deg);
   background: #1c1c28;
@@ -298,28 +230,18 @@ body.light .stage {
   padding: 8px 4px;
   gap: 4px;
 }
-.stage-card .sym {
-  font-size: clamp(24px, 9vw, 38px);
-  line-height: 1;
-}
-.stage-card .nm {
-  font-size: clamp(11px, 3.4vw, 14px);
-  font-weight: 700;
-  letter-spacing: 1px;
-}
+.stage-card .sym { font-size: clamp(24px, 9vw, 38px); line-height: 1; }
+.stage-card .nm { font-size: clamp(11px, 3.4vw, 14px); font-weight: 700; letter-spacing: 1px; }
 .stage-card .en {
   font-size: clamp(7px, 2vw, 9px);
   color: #888;
   letter-spacing: 1px;
-  text-align: center;
-  padding: 0 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
 }
 
-/* 亮色模式适配 */
 body.light .stage-card .back {
   background:
     radial-gradient(circle at 50% 50%, rgba(176, 128, 58, 0.12) 0%, transparent 55%),
@@ -329,23 +251,12 @@ body.light .stage-card .back {
     linear-gradient(135deg, #f8f4ec 0%, #ebe4d4 50%, #f8f4ec 100%);
   border-color: #b0803a;
 }
-body.light .stage-card .back::before {
-  border-color: rgba(176, 128, 58, 0.45);
-}
-body.light .stage-card .front {
-  background: #fff;
-  border-color: #e4dbc9;
-}
+body.light .stage-card .back::before { border-color: rgba(176, 128, 58, 0.45); }
+body.light .stage-card .front { background: #fff; border-color: #e4dbc9; }
 
-/* ============================================================
-   L2 分析结果
-   ============================================================ */
-.reading {
-  display: none;
-  margin-bottom: 16px;
-}
+/* ---- L2 分析结果 ---- */
+.reading { display: none; margin-bottom: 16px; }
 .reading.show { display: block; }
-
 .reading-layer {
   background: #1c1c28;
   border-left: 3px solid #d4a050;
@@ -355,10 +266,13 @@ body.light .stage-card .front {
   line-height: 1.9;
   margin-bottom: 10px;
   white-space: pre-wrap;
+  animation: fadeIn 0.4s ease;
 }
-body.light .reading-layer {
-  background: #fff;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+body.light .reading-layer { background: #fff; }
 .reading-layer .label {
   font-size: clamp(9px, 2.6vw, 11px);
   color: #d4a050;
@@ -367,34 +281,16 @@ body.light .reading-layer {
   margin-bottom: 6px;
   display: block;
 }
-.reading-layer.relation {
-  border-left-color: #5b8def;
-}
-.reading-layer.relation .label {
-  color: #5b8def;
-}
-.reading-layer.observation {
-  border-left-color: #8b5cf6;
-}
-.reading-layer.observation .label {
-  color: #8b5cf6;
-}
-body.light .reading-layer.relation {
-  border-left-color: #3d6ccc;
-}
-body.light .reading-layer.relation .label {
-  color: #3d6ccc;
-}
-body.light .reading-layer.observation {
-  border-left-color: #6d3edc;
-}
-body.light .reading-layer.observation .label {
-  color: #6d3edc;
-}
+.reading-layer.relation { border-left-color: #5b8def; }
+.reading-layer.relation .label { color: #5b8def; }
+.reading-layer.observation { border-left-color: #8b5cf6; }
+.reading-layer.observation .label { color: #8b5cf6; }
+body.light .reading-layer.relation { border-left-color: #3d6ccc; }
+body.light .reading-layer.relation .label { color: #3d6ccc; }
+body.light .reading-layer.observation { border-left-color: #6d3edc; }
+body.light .reading-layer.observation .label { color: #6d3edc; }
 
-/* ============================================================
-   问题输入框 · 16px 防 iOS 缩放
-   ============================================================ */
+/* ---- 输入框 · 16px 防 iOS 缩放 ---- */
 textarea {
   width: 100%;
   padding: 12px;
@@ -410,22 +306,11 @@ textarea {
   line-height: 1.6;
 }
 textarea:focus { outline: none; border-color: #d4a050; }
-body.light textarea {
-  background: #fff;
-  color: #2a2520;
-  border-color: #ddd;
-}
-textarea::placeholder {
-  color: #555;
-  font-style: italic;
-}
-body.light textarea::placeholder {
-  color: #aaa;
-}
+body.light textarea { background: #fff; color: #2a2520; border-color: #ddd; }
+textarea::placeholder { color: #555; font-style: italic; }
+body.light textarea::placeholder { color: #aaa; }
 
-/* ============================================================
-   历史记录
-   ============================================================ */
+/* ---- 历史记录 ---- */
 .hist-item {
   background: #1c1c28;
   border: 1px solid #2a2a38;
@@ -434,10 +319,7 @@ body.light textarea::placeholder {
   margin-bottom: 8px;
   cursor: pointer;
 }
-body.light .hist-item {
-  background: #fff;
-  border-color: #e4dbc9;
-}
+body.light .hist-item { background: #fff; border-color: #e4dbc9; }
 .hist-head {
   display: flex;
   justify-content: space-between;
@@ -445,15 +327,8 @@ body.light .hist-item {
   color: #888;
   margin-bottom: 6px;
 }
-.hist-q {
-  font-size: clamp(12px, 3.5vw, 14px);
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.hist-cards {
-  font-size: clamp(11px, 3.2vw, 13px);
-  color: #999;
-}
+.hist-q { font-size: clamp(12px, 3.5vw, 14px); font-weight: bold; margin-bottom: 4px; }
+.hist-cards { font-size: clamp(11px, 3.2vw, 13px); color: #999; }
 .hist-detail {
   display: none;
   margin-top: 10px;
@@ -473,9 +348,7 @@ body.light .hist-item {
   margin-bottom: 4px;
   display: block;
 }
-body.light .hist-detail {
-  border-top-color: #e4dbc9;
-}
+body.light .hist-detail { border-top-color: #e4dbc9; }
 
 .empty {
   text-align: center;
@@ -484,9 +357,6 @@ body.light .hist-detail {
   font-size: clamp(12px, 3.5vw, 14px);
 }
 
-/* ============================================================
-   明暗切换按钮
-   ============================================================ */
 .theme {
   position: fixed;
   top: calc(16px + env(safe-area-inset-top));
@@ -501,14 +371,8 @@ body.light .hist-detail {
   font-size: 16px;
   z-index: 10;
 }
-body.light .theme {
-  background: #fff;
-  border-color: #ddd;
-}
+body.light .theme { background: #fff; border-color: #ddd; }
 
-/* ============================================================
-   落款
-   ============================================================ */
 .tip {
   flex-shrink: 0;
   width: 100%;
@@ -520,14 +384,6 @@ body.light .theme {
   background: #14141c;
   z-index: 10;
 }
-body.light .tip {
-  background: #f5f1e8;
-}
-.tip .by {
-  color: #d4a050;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-body.light .tip .by {
-  color: #b0803a;
-}
+body.light .tip { background: #f5f1e8; }
+.tip .by { color: #d4a050; font-weight: 700; letter-spacing: 2px; }
+body.light .tip .by { color: #b0803a; }
