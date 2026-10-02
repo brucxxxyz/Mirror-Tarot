@@ -42,13 +42,13 @@
   .app::-webkit-scrollbar { display: none; }
 
   h1 {
-    font-size: 16px;
+    font-size: clamp(15px, 4.5vw, 18px);
     letter-spacing: 3px;
     color: #d4a050;
     margin-bottom: 4px;
   }
   .sub {
-    font-size: 11px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #777;
     margin-bottom: 20px;
   }
@@ -65,7 +65,7 @@
     background: #1c1c28;
     color: #999;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: clamp(13px, 3.8vw, 15px);
     cursor: pointer;
     font-family: inherit;
   }
@@ -96,7 +96,7 @@
     background: transparent;
     color: #d4a050;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: clamp(14px, 4vw, 16px);
     cursor: pointer;
     font-family: inherit;
     margin-bottom: 16px;
@@ -121,58 +121,74 @@
     border-color: #e4dbc9;
   }
   .card-symbol {
-    font-size: 56px;
+    font-size: clamp(48px, 14vw, 64px);
     line-height: 1;
-    margin div-bottom: 10px;
+    margin-bottom: 10px;
   }
   .card-name {
- {
-    font-size: 22px;
-    font-weight: bold   ;
+    font-size: clamp(20px, 6vw, 26px);
+    font-weight: bold;
     letter-spacing: 4px;
-    margin-bottom: background 4px;
+    margin-bottom: 4px;
   }
- : .card-en {
-    font-size: 11px;
+  .card-en {
+    font-size: clamp(10px, 3vw, 12px);
     color: #888;
     letter-spacing: 2px;
     margin-bottom: 8px;
   }
   .card-key {
-    font-size: 12px;
+    font-size: clamp(11px, 3.5vw, 13px);
     color: #999;
   }
 
+  /* ============================================================
+     三张牌：强制横向排列，字体根据屏幕尺寸缩放
+     ============================================================ */
   .three-cards {
-    display: flex;
-    gap: 8px;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    gap: 5px;
     margin-bottom: 16px;
+    width: 100%;
   }
   .three-cards > div {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0; /* 关键：防止内容溢出导致换行 */
     background: #1c1c28;
     border: 1px solid #2a2a38;
-    border-radius: 10px;
-    padding: 12px 6px;
+    border-radius: 8px;
+    padding: 10px 2px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
   }
-  body.light .three-cards > #fff;
+  body.light .three-cards > div {
+    background: #fff;
     border-color: #e4dbc9;
   }
   .pos {
-    font-size: 10px;
+    font-size: clamp(8px, 2.5vw, 10px);
     color: #888;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
   }
   .three-cards .sym {
-    font-size: 28px;
+    font-size: clamp(20px, 8vw, 30px);
     line-height: 1;
     margin-bottom: 4px;
   }
   .three-cards .nm {
-    font-size: 13px;
+    font-size: clamp(10px, 3.5vw, 13px);
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .out {
@@ -180,7 +196,7 @@
     border-left: 3px solid #d4a050;
     border-radius: 8px;
     padding: 14px 16px;
-    font-size: 14px;
+    font-size: clamp(13px, 3.8vw, 15px);
     line-height: 1.9;
     white-space: pre-wrap;
     margin-bottom: 16px;
@@ -189,7 +205,7 @@
     background: #fff;
   }
 
-  /* 输入框字体 16px 防止 iOS 自动缩放 */
+  /* 输入框字体必须 ≥16px，否则 iOS 会强制放大页面 */
   textarea {
     width: 100%;
     padding: 12px;
@@ -223,18 +239,18 @@
   .hist-head {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #888;
     margin-bottom: 6px;
   }
-  .hist-q { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
-  .hist-cards { font-size: 12px; color: #999; }
+  .hist-q { font-size: clamp(12px, 3.5vw, 14px); font-weight: bold; margin-bottom: 4px; }
+  .hist-cards { font-size: clamp(11px, 3.2vw, 13px); color: #999; }
 
   .empty {
     text-align: center;
     color: #666;
     padding: 40px 20px;
-    font-size: 13px;
+    font-size: clamp(12px, 3.5vw, 14px);
   }
 
   .theme {
@@ -256,12 +272,12 @@
     border-color: #ddd;
   }
 
-  /* 落款：无分割线，位置适中 */
+  /* 落款 */
   .tip {
     flex-shrink: 0;
     width: 100%;
     padding: 8px 0 calc(16px + env(safe-area-inset-bottom));
-    font-size: 11px;
+    font-size: clamp(10px, 3vw, 12px);
     color: #666;
     text-align: center;
     letter-spacing: 3px;
