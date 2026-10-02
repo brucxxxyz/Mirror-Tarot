@@ -1,8 +1,8 @@
-<index.html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>镜面塔罗 · 极简版</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -10,7 +10,7 @@
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     background: #14141c;
     color: #e8e4dc;
-    padding: 20px;
+    padding: 20px 20px calc(60px + env(safe-area-inset-bottom));
     min-height: 100vh;
     line-height: 1.7;
   }
@@ -217,7 +217,7 @@
 
   .theme {
     position: fixed;
-    top: 16px;
+    top: calc(16px + env(safe-area-inset-top));
     right: 16px;
     width: 36px;
     height: 36px;
@@ -227,18 +227,31 @@
     color: #d4a050;
     cursor: pointer;
     font-size: 16px;
+    z-index: 10;
   }
   body.light .theme {
     background: #fff;
     border-color: #ddd;
   }
 
+  /* 落款固定在底部，避开 iPhone 安全区 */
   .tip {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
     font-size: 11px;
     color: #666;
     text-align: center;
-    margin-top: 24px;
     letter-spacing: 3px;
+    background: #14141c;
+    border-top: 1px solid #2a2a38;
+    z-index: 10;
+  }
+  body.light .tip {
+    background: #f5f1e8;
+    border-top: 1px solid #e4dbc9;
   }
   .tip .by {
     color: #d4a050;
@@ -280,9 +293,9 @@
   <div class="view" id="v-hist">
     <div id="histOut"></div>
   </div>
-
-  <div class="tip">—— Designed by <span class="by">BY</span> ——</div>
 </div>
+
+<div class="tip">—— Designed by <span class="by">BY</span> ——</div>
 
 <script>
 (function(){
