@@ -142,29 +142,100 @@
     21: '你正在靠近一个循环的终点。'
   };
 
+  // ============================================================
+  //  阶段划分
+  // ============================================================
   function stageOf(id) {
     if (id <= 6)  return 0;
     if (id <= 14) return 1;
     return 2;
   }
-
   function stageName(s) {
     return ['开端', '试炼', '转化'][s];
   }
 
-  function motion(a, b) {
-    var d = b.id - a.id;
-    if (Math.abs(d) <= 3) return 'near';
-    return d > 0 ? 'forward' : 'backward';
+  // ============================================================
+  //  L2 分析引擎
+  //  ——「关联」只讲方向与跨度，不提牌名
+  //  ——「综合」只给一个提问，不重复陈述
+  // ============================================================
+  function analyze(question, cards) {
+    var a = cards[0], b = cards[1], c = cards[2];
+
+    // ---------- 第一层 · 单张解读 ----------
+    var single =
+      '【过去 · ' + a.n + '】\n' + a.past + '\n\n' +
+      '【现在 · ' + b.n + '】\n' + b.present + '\n\n' +
+      '【未来 · ' + c.n + '】\n' + c.future;
+
+    // ---------- 第二层 · 牌与牌的关联（只讲方向，不提牌名） ----------
+    var d1 = b.id - a.id;
+    var d2 = c.id - b.id;
+
+    var flow;
+    if (Math.abs(d1) <= 3 && Math.abs(d2) <= 3) {
+      flow = '三张牌在牌阵上靠得很近——像在同一个话题里反复打转。';
+    } else if (d1 > 0 && d2 > 0) {
+      flow = '三张牌的方向是一致的——一路往前推。';
+    } else if (d1 < 0 && d2 < 0) {
+      flow = '三张牌的方向是一致的——一路往回走。';
+    } else if (d1 > 0 && d2 < 0) {
+      flow = '三张牌先往前、再折回来——是"试了一下又退回去"的姿态。';
+    } else {
+      flow = '三张牌先退、再往前——像在整理完某样东西之后，才准备起步。';
+    }
+
+    var sA = stageOf(a.id), sB = stageOf(b.id), sC = stageOf(c.id);
+    var stageLine = '';
+    if (sA === sB && sB === sC) {
+      stageLine = '三张牌都落在「' + stageName(sA) + '」阶段——还停在同一个课题里。';
+    } else if (sC > sA) {
+      stageLine = '整体从「' + stageName(sA) + '」走向「' + stageName(sC) + '」——是一条往后的路。';
+    } else if (sC < sA) {
+      stageLine = '整体从「' + stageName(sA) + '」回到「' + stageName(sC) + '」——是一条往回的路。';
+    } else {
+      stageLine = '整体停留在「' + stageName(sA) + '」和「' + stageName(sC) + '」之间，没有真正跨过哪一段。';
+    }
+
+    var relation = flow + '\n' + stageLine;
+
+    // ---------- 第三层 · 综合观察（只提问，不陈述） ----------
+    var observation = buildQuestion(question, c);
+
+    return { single: single, relation: relation, observation: observation };
   }
 
-  function motionPhrase(m) {
-    if (m === 'near')    return '主题没有大改，只是换了一个角度';
-    if (m === 'forward') return '是从更前面的状态，走到了更后面的位置';
-    return '是从更后面的状态，走回到了更前面的位置';
+  // 根据「未来」牌的性质，给出一个反问
+  function buildQuestion(question, futureCard) {
+    var head = '你问的是「' + question + '」。';
+    var id = futureCard.id;
+    var ask;
+
+    if (id === 13 || id === 15 || id === 16) {
+      // 死神 / 恶魔 / 塔 —— 比较难的三张
+      ask = '未来的那张牌并不轻松——你真正抓住不放的，是什么？';
+    } else if (id === 17 || id === 19 || id === 21) {
+      // 星星 / 太阳 / 世界 —— 明亮的三张
+      ask = '未来的那张牌给了你一点光——你愿意相信它吗？';
+    } else if (id === 18) {
+      // 月亮
+      ask = '未来的那张牌还在雾里——你愿意等它自己变清楚吗？';
+    } else if (id === 12) {
+      // 倒吊人
+      ask = '未来的那张牌让你停一下——你舍得停下来吗？';
+    } else if (id === 0) {
+      // 愚者
+      ask = '未来的那张牌是一个还没成形的开始——你敢不敢迈出去？';
+    } else {
+      ask = '三张牌已经翻完了——你现在最想问自己的是什么？';
+    }
+
+    return head + '\n\n' + ask;
   }
 
-  // 单张解读（供逐张显示使用）
+  // ============================================================
+  //  单张解读（逐张翻开时使用）
+  // ============================================================
   function interpretAt(card, position) {
     var labels = ['过去', '现在', '未来'];
     var text;
@@ -174,73 +245,9 @@
     return { label: labels[position], name: card.n, text: text };
   }
 
-  // 完整分析（关联 + 综合）
-  function analyze(question, cards) {
-    var a = cards[0], b = cards[1], c = cards[2];
-
-    // 单张（备用，逐张模式会绕过它）
-    var single =
-      '【过去 · ' + a.n + '】\n' + a.past + '\n\n' +
-      '【现在 · ' + b.n + '】\n' + b.present + '\n\n' +
-      '【未来 · ' + c.n + '】\n' + c.future;
-
-    // 关联
-    var m1 = motion(a, b);
-    var m2 = motion(b, c);
-    var sA = stageOf(a.id), sB = stageOf(b.id), sC = stageOf(c.id);
-
-    var lines = [];
-    lines.push('从「' + a.n + '」到「' + b.n + '」，' + motionPhrase(m1) + '。');
-    lines.push('从「' + b.n + '」到「' + c.n + '」，' + motionPhrase(m2) + '。');
-
-    if (sA === sB && sB === sC) {
-      lines.push(
-        '三张牌都落在「' + stageName(sA) + '」阶段——' +
-        '你在这段时间里，一直在同一个课题里打转，只是换了不同的面孔。'
-      );
-    } else if (sA < sC) {
-      lines.push(
-        '整体上，你正在从「' + stageName(sA) + '」走到「' + stageName(sC) + '」——' +
-        '这是一个往前推的方向。'
-      );
-    } else if (sA > sC) {
-      lines.push(
-        '整体上，你正在从「' + stageName(sA) + '」回到「' + stageName(sC) + '」——' +
-        '这不是退步，更像是在回头整理某些还没处理完的东西。'
-      );
-    } else {
-      lines.push('三张牌在阶段上有些摇摆，说明你正处在两种状态之间来回。');
-    }
-    var relation = lines.join('\n');
-
-    // 综合
-    var observation = buildObservation(question, sA, sB, sC);
-
-    return { single: single, relation: relation, observation: observation };
-  }
-
-  function buildObservation(question, sA, sB, sC) {
-    var head = '你问的是「' + question + '」。';
-    var core, ask;
-
-    if (sA === sB && sB === sC) {
-      core = '牌面上没有出现明显的变化，反而是三张牌在同一层次里互相呼应。' +
-             '也许问题不在「怎么变」，而在「你到底在看哪一面」。';
-      ask  = '你现在最不愿意看的，是哪一张？';
-    } else if (sA < sC) {
-      core = '牌面整体是往前走的。你已经在动了，只是还没回头确认过自己走到了哪里。';
-      ask  = '你已经走到这里了——下一步，你想先确认什么？';
-    } else if (sA > sC) {
-      core = '牌面看起来在往回走。有些东西还没有真正过去，它在用另一种方式提醒你。';
-      ask  = '你在回望的那件事，真的还没有结束吗？';
-    } else {
-      core = '牌面在两种状态之间摆动。这不是混乱，而是你正在两件事之间找平衡。';
-      ask  = '这两件事，哪一件更值得你现在花力气？';
-    }
-
-    return head + '\n\n' + core + '\n\n' + ask;
-  }
-
+  // ============================================================
+  //  工具
+  // ============================================================
   function randomCard() {
     return DECK[Math.floor(Math.random() * DECK.length)];
   }
